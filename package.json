@@ -1,7 +1,7 @@
 {
-  "name": "web-did-resolver",
-  "version": "2.0.23",
-  "description": "Resolve DID documents from an https domain",
+  "name": "plc-did-resolver",
+  "version": "1.0.0",
+  "description": "Resolve DID documents from PLC Directory",
   "type": "module",
   "source": "src/resolver.ts",
   "main": "./lib/resolver.cjs",
@@ -19,17 +19,14 @@
       "import": "./lib/resolver.module.js"
     }
   },
-  "author": "Mike Xu",
-  "contributors": [
-    "Mircea Nistor <mircea.nistor@mesh.xyz>"
-  ],
+  "author": "Nick Reynolds",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:decentralized-identity/web-did-resolver.git"
+    "url": "git@github.com:veramolabs/plc-did-resolver.git"
   },
   "dependencies": {
-    "cross-fetch": "^3.1.5",
+    "axios": "^1.3.6",
     "did-resolver": "^4.0.0"
   },
   "scripts": {

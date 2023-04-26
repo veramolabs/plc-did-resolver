@@ -1,53 +1,43 @@
-[![npm](https://img.shields.io/npm/dt/web-did-resolver.svg)](https://www.npmjs.com/package/web-did-resolver)
-[![npm](https://img.shields.io/npm/v/web-did-resolver.svg)](https://www.npmjs.com/package/web-did-resolver)
-[![codecov](https://codecov.io/gh/decentralized-identity/web-did-resolver/branch/develop/graph/badge.svg)](https://codecov.io/gh/decentralized-identity/web-did-resolver)
+[![npm](https://img.shields.io/npm/dt/plc-did-resolver.svg)](https://www.npmjs.com/package/plc-did-resolver)
+[![npm](https://img.shields.io/npm/v/plc-did-resolver.svg)](https://www.npmjs.com/package/plc-did-resolver)
+[![codecov](https://codecov.io/gh/veramolabs/plc-did-resolver/branch/develop/graph/badge.svg)](https://codecov.io/gh/veramolabs/plc-did-resolver)
 
-# Web DID Resolver
+# Plc DID Resolver
 
-This library is intended to represent domains accessed through https as
-[Decentralized Identifiers](https://w3c.github.io/did-core/#identifier)
+This library is intended to resolve [PLC DIDs](https://atproto.com/specs/did-plc) 
 and retrieve an associated [DID Document](https://w3c.github.io/did-core/#did-document-properties)
+from the "PLC Directory"
 
-It supports the proposed [`did:web` method spec](https://w3c-ccg.github.io/did-method-web/) from
-the [W3C Credentials Community Group](https://w3c-ccg.github.io).
 
 It requires the `did-resolver` library, which is the primary interface for resolving DIDs.
 
-## DID method
 
-To encode a DID for an HTTPS domain, simply prepend `did:web:` to domain name.
-
-eg: `https://example.com -> did:web:example.com`
+This DID Method is not considered "decentralized" at all, and will likely be replaced in the future.
 
 ## DID Document
 
-The DID resolver takes the domain and forms a [well-known URI](https://tools.ietf.org/html/rfc5785)
-to access the DID Document.
-
-For a did `did:web:example.com`, the resolver will attempt to access the document at
-`https://example.com/.well-known/did.json`
+The DID resolver takes the DID and retrieves a document from the PLC Directory associated with that DID.
 
 A minimal DID Document might contain the following information:
 
 ```json
 {
-  "@context": "https://w3id.org/did/v1",
-  "id": "did:web:example.com",
-  "publicKey": [
-    {
-      "id": "did:web:example.com#owner",
-      "type": "Secp256k1VerificationKey2018",
-      "controller": "did:web:example.com",
-      "publicKeyHex": "04ab0102bcae6c7c3a90b01a3879d9518081bc06123038488db9cb109b082a77d97ea3373e3dfde0eccd9adbdce11d0302ea5c098dbb0b310234c8689501749274"
-    }
-  ],
-  "assertionMethod": [ "did:web:example.com#owner" ],
-  "authentication": [ "did:web:example.com#owner" ]
-}
+ 		"@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1-2019/v1"],
+ 		"id": "did:plc:wuyiqd25zhsut5a2gc46iqoi",
+ 		"alsoKnownAs": ["at://okaynick.bsky.social"],
+ 		"verificationMethod": [{
+ 			"id": "#atproto",
+ 			"type": "EcdsaSecp256k1VerificationKey2019",
+ 			"controller": "did:plc:wuyiqd25zhsut5a2gc46iqoi",
+ 			"publicKeyMultibase": "zQYEBzXeuTM9UR3rfvNag6L3RNAs5pQZyYPsomTsgQhsxLdEgCrPTLgFna8yqCnxPpNT7DBk6Ym3dgPKNu86vt9GR"
+ 		}],
+ 		"service": [{
+ 			"id": "#atproto_pds",
+ 			"type": "AtprotoPersonalDataServer",
+ 			"serviceEndpoint": "https://bsky.social"
+ 		}]
+ 	}
 ```
-
-Note: this example uses the `Secp256k1VerificationKey2018` type and an `publicKeyHex` as a publicKey entry, signaling
-that this DID is claiming to control the private key associated with that publicKey.
 
 ## Resolving a DID document
 
@@ -55,20 +45,20 @@ The resolver presents a simple `resolver()` function that returns a ES6 Promise 
 
 ```js
 import { Resolver } from 'did-resolver'
-import { getResolver } from 'web-did-resolver'
+import { getResolver } from 'plc-did-resolver'
 
-const webResolver = getResolver()
+const plcResolver = getResolver()
 
 const didResolver = new Resolver({
-    ...webResolver
+    ...plcResolver
     //...you can flatten multiple resolver methods into the Resolver
 })
 
-didResolver.resolve('did:web:uport.me').then(doc => console.log(doc))
+didResolver.resolve('did:plc:wuyiqd25zhsut5a2gc46iqoi').then(doc => console.log(doc))
 
 // You can also use ES7 async/await syntax
 ;(async () => {
-    const doc = await didResolver.resolve('did:web:uport.me')
+    const doc = await didResolver.resolve('did:plc:wuyiqd25zhsut5a2gc46iqoi')
     console.log(doc)
 })();
 ```

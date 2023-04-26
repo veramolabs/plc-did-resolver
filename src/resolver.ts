@@ -1,36 +1,19 @@
-import fetch from 'cross-fetch'
+import axios from 'axios'
 import { DIDDocument, DIDResolutionResult, DIDResolver, ParsedDID } from 'did-resolver'
-
-const DOC_PATH = '/.well-known/did.json'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function get(url: string): Promise<any> {
-  const res = await fetch(url, { mode: 'cors' })
-  if (res.status >= 400) {
-    throw new Error(`Bad response ${res.statusText}`)
-  }
-  return res.json()
-}
 
 export function getResolver(): Record<string, DIDResolver> {
   async function resolve(did: string, parsed: ParsedDID): Promise<DIDResolutionResult> {
     let err = null
-    let path = decodeURIComponent(parsed.id) + DOC_PATH
-    const id = parsed.id.split(':')
-    if (id.length > 1) {
-      path = id.map(decodeURIComponent).join('/') + '/did.json'
-    }
-
-    const url = `https://${path}`
+    let url = `https://plc.directory/${encodeURIComponent(did)}`
 
     const didDocumentMetadata = {}
     let didDocument: DIDDocument | null = null
 
     do {
       try {
-        didDocument = await get(url)
+        didDocument = (await axios.get(url)).data
       } catch (error) {
-        err = `resolver_error: DID must resolve to a valid https URL containing a JSON document: ${error}`
+        err = `resolver_error: '"https://plc.directory/" + DID' must resolve to a valid https URL containing a JSON document: ${error}`
         break
       }
 
@@ -64,5 +47,5 @@ export function getResolver(): Record<string, DIDResolver> {
     }
   }
 
-  return { web: resolve }
+  return { plc: resolve }
 }
