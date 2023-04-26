@@ -4,7 +4,7 @@ import { DIDDocument, DIDResolutionResult, DIDResolver, ParsedDID } from 'did-re
 export function getResolver(): Record<string, DIDResolver> {
   async function resolve(did: string, parsed: ParsedDID): Promise<DIDResolutionResult> {
     let err = null
-    let url = `https://plc.directory/${encodeURIComponent(did)}`
+    const url = `https://plc.directory/${encodeURIComponent(did)}`
 
     const didDocumentMetadata = {}
     let didDocument: DIDDocument | null = null
